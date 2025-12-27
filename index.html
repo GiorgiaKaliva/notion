@@ -28,6 +28,7 @@ body {
   display: flex;
   gap: 12px;
   margin-bottom: 12px;
+  justify-content: center; /* center horizontally */
 }
 
 .card {
@@ -38,12 +39,13 @@ body {
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center; /* center content */
 }
 
 .card label {
   font-size: 12px;
   margin-bottom: 4px;
+  font-weight: bold;
 }
 
 .card input[type="time"] {
@@ -56,20 +58,20 @@ body {
 .card button {
   font-size: 11px;
   padding: 3px 6px;
-  margin: 2px 0 2px 0;
+  margin: 2px 2px 2px 2px;
 }
 
 .status {
   font-size: 12px;
   font-weight: bold;
   margin-top: 4px;
-  align-self: flex-end;
 }
 
 .pills-line {
   display: flex;
   gap: 2px;
   flex-wrap: wrap;
+  justify-content: center;
   margin-bottom: 2px;
 }
 
@@ -78,6 +80,17 @@ body {
   justify-content: flex-end;
   margin-bottom: 8px;
   gap: 4px;
+}
+
+.button-group {
+  display: flex;
+  gap: 4px;
+}
+.section-title {
+  font-weight: bold;
+  margin-bottom: 6px;
+  text-align: center;
+  font-size: 14px;
 }
 </style>
 </head>
@@ -90,8 +103,8 @@ body {
     <button onclick="resetWeekly()">Reset Week</button>
   </div>
 
+  <div class="section-title">Daily Habits</div>
   <div class="row" id="dailyRow">
-    <!-- Daily habit cards -->
     <div class="card">
       <label>🕖 Wake</label>
       <input type="time" id="wakeTime">
@@ -106,8 +119,10 @@ body {
 
     <div class="card">
       <label>💧 Water</label>
-      <button onclick="addWater(250)">+250ml</button>
-      <button onclick="rewindWater(250)">-250ml</button>
+      <div class="button-group">
+        <button onclick="addWater(250)">+250ml</button>
+        <button onclick="rewindWater(250)">-250ml</button>
+      </div>
       <div class="status" id="waterStatus"></div>
     </div>
 
@@ -131,8 +146,8 @@ body {
     </div>
   </div>
 
+  <div class="section-title">Weekly Habits</div>
   <div class="row" id="weeklyRow">
-    <!-- Weekly habit cards -->
     <div class="card">
       <label>🏋️ Workout</label>
       <button onclick="toggleWeekly('workout')">Done today</button>
@@ -153,8 +168,10 @@ body {
 
     <div class="card">
       <label>☕ Coffee</label>
-      <button onclick="addCoffee()">+1</button>
-      <button onclick="rewindCoffee()">-1</button>
+      <div class="button-group">
+        <button onclick="addCoffee()">+1</button>
+        <button onclick="rewindCoffee()">-1</button>
+      </div>
       <div class="status" id="coffeeStatus"></div>
     </div>
   </div>
