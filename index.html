@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Habits Widget Horizontal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f6f6f6;
+  margin: 0;
+  padding: 10px;
+}
+
+.widget {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 14px;
+  padding: 12px;
+  max-width: 100%;
+  overflow-x: auto;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+}
+
+.row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.card {
+  background: #fafafa;
+  border-radius: 12px;
+  padding: 10px;
+  min-width: 140px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.card label {
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.card input[type="time"] {
+  width: 100%;
+  padding: 3px;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.card button {
+  font-size: 11px;
+  padding: 3px 6px;
+  margin: 2px 0 2px 0;
+}
+
+.status {
+  font-size: 12px;
+  font-weight: bold;
+  margin-top: 4px;
+  align-self: flex-end;
+}
+
+.pills-line {
+  display: flex;
+  gap: 2px;
+  flex-wrap: wrap;
+  margin-bottom: 2px;
+}
+
+.top-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+  gap: 4px;
+}
+</style>
+</head>
+<body>
+
+<div class="widget">
+
+  <div class="top-buttons">
+    <button onclick="resetDaily()">Reset Today</button>
+    <button onclick="resetWeekly()">Reset Week</button>
+  </div>
+
+  <div class="row" id="dailyRow">
+    <!-- Daily habit cards -->
+    <div class="card">
+      <label>🕖 Wake</label>
+      <input type="time" id="wakeTime">
+      <div class="status" id="wakeStatus"></div>
+    </div>
+
+    <div class="card">
+      <label>🌙 Sleep</label>
+      <input type="time" id="sleepTime">
+      <div class="status" id="sleepStatus"></div>
+    </div>
+
+    <div class="card">
+      <label>💧 Water</label>
+      <button onclick="addWater(250)">+250ml</button>
+      <button onclick="rewindWater(250)">-250ml</button>
+      <div class="status" id="waterStatus"></div>
+    </div>
+
+    <div class="card">
+      <label>💊 Pills</label>
+      <div class="pills-line">
+        <button onclick="togglePill('stomach')">Stomach</button>
+        <button onclick="togglePill('thyroid')">Thyroid</button>
+      </div>
+      <div class="pills-line">
+        <button onclick="togglePill('b12_1')">B12</button>
+        <button onclick="togglePill('b12_2')">B12</button>
+        <button onclick="togglePill('iron_1')">Iron</button>
+        <button onclick="togglePill('selenium')">Selenium</button>
+        <button onclick="togglePill('vitamin_d')">Vit D</button>
+      </div>
+      <div class="pills-line">
+        <button onclick="togglePill('iron_2')">Iron</button>
+      </div>
+      <div class="status" id="pillStatus"></div>
+    </div>
+  </div>
+
+  <div class="row" id="weeklyRow">
+    <!-- Weekly habit cards -->
+    <div class="card">
+      <label>🏋️ Workout</label>
+      <button onclick="toggleWeekly('workout')">Done today</button>
+      <div class="status" id="workoutStatus"></div>
+    </div>
+
+    <div class="card">
+      <label>🧴 Skincare</label>
+      <button onclick="toggleWeekly('skincare')">Done today</button>
+      <div class="status" id="skincareStatus"></div>
+    </div>
+
+    <div class="card">
+      <label>🚿 Shower</label>
+      <button onclick="toggleWeekly('shower')">Done today</button>
+      <div class="status" id="showerStatus"></div>
+    </div>
+
+    <div class="card">
+      <label>☕ Coffee</label>
+      <button onclick="addCoffee()">+1</button>
+      <button onclick="rewindCoffee()">-1</button>
+      <div class="status" id="coffeeStatus"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const KEY="habits-widget";
+const GOALS={wake:"07:30", sleep:"23:30", water:2000, workout:5, skincare:6, shower:6, coffeeMax:2};
+const PILL_KEYS=["stomach","thyroid","b12_1","b12_2","iron_1","iron_2","selenium","vitamin_d"];
+
+let state=JSON.parse(localStorage.getItem(KEY))||{date:new Date().toISOString().slice(0,10),daily:{wakeTime:null,sleepTime:null,water:0,pills:Object.fromEntries(PILL_KEYS.map(p=>[p,false]))},weekly:{workout:0,skincare:0,shower:0,coffee:0}};
+
+if(state.date!==new Date().toISOString().slice(0,10)){
+  state.date=new Date().toISOString().slice(0,10);
+  state.daily={wakeTime:null,sleepTime:null,water:0,pills:Object.fromEntries(PILL_KEYS.map(p=>[p,false]))};
+}
+
+function save(){ localStorage.setItem(KEY,JSON.stringify(state)); render(); }
+
+function render(){
+  document.getElementById("wakeStatus").textContent=state.daily.wakeTime?(state.daily.wakeTime<GOALS.wake?"✅":"❌"):"";
+  document.getElementById("sleepStatus").textContent=state.daily.sleepTime?(state.daily.sleepTime<GOALS.sleep?"✅":"❌"):"";
+  document.getElementById("waterStatus").textContent=`${state.daily.water}/2000ml ${state.daily.water>=2000?"✅":""}`;
+  const taken=Object.values(state.daily.pills).filter(Boolean).length;
+  document.getElementById("pillStatus").textContent=`${taken}/${PILL_KEYS.length} ${taken===PILL_KEYS.length?"✅":""}`;
+  document.getElementById("workoutStatus").textContent=`${state.weekly.workout}/5`;
+  document.getElementById("skincareStatus").textContent=`${state.weekly.skincare}/6`;
+  document.getElementById("showerStatus").textContent=`${state.weekly.shower}/6`;
+  document.getElementById("coffeeStatus").textContent=`${state.weekly.coffee}/2 ${state.weekly.coffee<=2?"":"❌"}`;
+}
+
+document.getElementById("wakeTime").onchange=e=>{state.daily.wakeTime=e.target.value; save();}
+document.getElementById("sleepTime").onchange=e=>{state.daily.sleepTime=e.target.value; save();}
+function addWater(ml){ state.daily.water=Math.min(state.daily.water+ml,2000); save();}
+function rewindWater(ml){ state.daily.water=Math.max(state.daily.water-ml,0); save();}
+function togglePill(p){ state.daily.pills[p]=!state.daily.pills[p]; save();}
+function toggleWeekly(k){ state.weekly[k]=Math.min(state.weekly[k]+1,GOALS[k]); save();}
+function addCoffee(){ state.weekly.coffee=Math.min(state.weekly.coffee+1,2); save();}
+function rewindCoffee(){ state.weekly.coffee=Math.max(state.weekly.coffee-1,0); save();}
+function resetDaily(){ if(confirm("Reset today?")){ state.daily={wakeTime:null,sleepTime:null,water:0,pills:Object.fromEntries(PILL_KEYS.map(p=>[p,false]))}; save();}}
+function resetWeekly(){ if(confirm("Reset week?")){ state.weekly={workout:0,skincare:0,shower:0,coffee:0}; save();}}
+
+render();
+</script>
+</body>
+</html>
