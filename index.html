@@ -1,105 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Simple Pie Chart</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-body {
-  font-family: system-ui, -apple-system, sans-serif;
-  background: #f6f6f6;
-  margin: 0;
-  padding: 20px;
-}
-
-.widget {
-  background: #fff;
-  border-radius: 14px;
-  padding: 16px;
-  max-width: 400px;
-  margin: auto;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-  text-align: center;
-}
-
-canvas {
-  margin-top: 10px;
-}
-
-.legend {
-  margin-top: 12px;
-  font-size: 13px;
-  text-align: left;
-}
-
-.legend div {
-  display: flex;
-  align-items: center;
-  margin-bottom: 6px;
-}
-
-.color-box {
-  width: 12px;
-  height: 12px;
-  margin-right: 8px;
-  border-radius: 3px;
-}
-</style>
+  <title>Hello World</title>
 </head>
-
 <body>
 
-<div class="widget">
-  <h3>Simple Pie Chart</h3>
-  <canvas id="pie" width="250" height="250"></canvas>
-
-  <div class="legend">
-    <div><span class="color-box" style="background:#4CAF50"></span>Work (40%)</div>
-    <div><span class="color-box" style="background:#2196F3"></span>Study (25%)</div>
-    <div><span class="color-box" style="background:#FF9800"></span>Rest (20%)</div>
-    <div><span class="color-box" style="background:#F44336"></span>Other (15%)</div>
-  </div>
-</div>
-
-<script>
-const data = [
-  { label: "Work", value: 40, color: "#4CAF50" },
-  { label: "Study", value: 25, color: "#2196F3" },
-  { label: "Rest", value: 20, color: "#FF9800" },
-  { label: "Other", value: 15, color: "#F44336" }
-];
-
-const canvas = document.getElementById("pie");
-const ctx = canvas.getContext("2d");
-
-let total = data.reduce((sum, d) => sum + d.value, 0);
-
-let startAngle = 0;
-const centerX = canvas.width / 2;
-const centerY = canvas.height / 2;
-const radius = 100;
-
-data.forEach(slice => {
-  let sliceAngle = (slice.value / total) * 2 * Math.PI;
-
-  ctx.beginPath();
-  ctx.moveTo(centerX, centerY);
-  ctx.arc(centerX, centerY, radius, startAngle, startAngle + sliceAngle);
-  ctx.closePath();
-
-  ctx.fillStyle = slice.color;
-  ctx.fill();
-
-  startAngle += sliceAngle;
-});
-
-// center circle (optional clean look)
-ctx.beginPath();
-ctx.arc(centerX, centerY, 40, 0, 2 * Math.PI);
-ctx.fillStyle = "#fff";
-ctx.fill();
-</script>
+  <h1 style="color: blue;">Hello World</h1>
 
 </body>
 </html>
